@@ -1,4 +1,4 @@
-Lingua/JA/Romaji version 0.01
+Lingua/JA/Romaji version 0.03
 =============================
 
 A kana<->romaji converter.  Initial release.
@@ -25,7 +25,8 @@ to kana and back.
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+This program is licensed under the GNU General Public License, 
+a copy of which should have been distributed with perl.
 
 Copyright (C) 2002 Jacob C. Kesinger <kesinger@math.ttu.edu>
 

@@ -8,3 +8,6 @@ Revision history for Perl extension Lingua::JA::Romaji.
         Boneheaded errors fixed. 
 	testro program added.  
         /v[aeiou/ ``hiragana'' added.
+
+0.03  Thu Jun 20 14:30:16 2002
+	Forgot the LICENSE statement in the README.
