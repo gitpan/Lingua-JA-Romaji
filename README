@@ -16,6 +16,13 @@ DEPENDENCIES
 
 This module has no other dependencies.
 
+TESTRO
+
+Enclosed is a sample program to illustrate the use of the module.  
+You'll need a terminal capable of displaying Japanese characters,
+such as kterm.  Enter romaji at the prompt, and it will be converted
+to kana and back.
+
 COPYRIGHT AND LICENCE
 
 Put the correct copyright and licence information here.

@@ -19,12 +19,12 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 	&romajitokana &kanatoromaji %hiragana %katakana
 ) ] );
 
-our @EXPORT_OK = (  @{ $EXPORT_TAGS{'all'} } );
+our @EXPORT_OK = (	qw( &kanatoromaji %hiragana %katakana ));
 
 our @EXPORT = qw(
-	
+	&romajitokana
 );
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 # Preloaded methods go here.
@@ -36,7 +36,7 @@ sub romajitokana {
     my $romaji = lc $_[0];
     my $kanatype;
     return unless $romaji;
-    if($_[1] =~ m/kata/i) {
+    if((defined $_[1]) && ($_[1] =~ m/kata/i)) {
         $kanatype = "kata";
     } else {
         $kanatype = "hira";
@@ -59,16 +59,16 @@ sub romajitokana {
     while ((defined $next)&&($roma[$i] =~ m/[a-z\-\*]/i)) {
         $next = $roma[$i+1];
         unless ($next){
-            if ($roma{$curst}->{$kanatype}) {
-                $output.=$roma{$curst}->{$kanatype};
+            if ($Lingua::JA::Romaji::roma{$curst}->{$kanatype}) {
+                $output.=$Lingua::JA::Romaji::roma{$curst}->{$kanatype};
                 $curst = "";
             }
         }
         next unless $next;
-        unless ($roma{$curst . $next}) {
+        unless ($Lingua::JA::Romaji::roma{$curst . $next}) {
             #we've gone too far, so print out what we've got, if anything
-            if ($roma{$curst}->{$kanatype}) {
-                $output.=$roma{$curst}->{$kanatype};
+            if ($Lingua::JA::Romaji::roma{$curst}->{$kanatype}) {
+                $output.=$Lingua::JA::Romaji::roma{$curst}->{$kanatype};
                 $curst = "";
 
             } 
@@ -76,19 +76,19 @@ sub romajitokana {
             #if we're here, then curst.next is valid...
             unless ($roma[$i+2]){
                 #...and there's nothing else
-                $output.=$roma{$curst . $next}->{$kanatype};
+                $output.=$Lingua::JA::Romaji::roma{$curst . $next}->{$kanatype};
                 $curst ="";
                 $next = "";
             }
         } 
         $i++;
-        $curst .= $next;
+        $curst = $curst . $next;
     }
     return $output;
 }
 
 #kanatoromaji(kana)
-sub kanatoroma {
+sub kanatoromaji {
     my $kana = $_[0];
     my $rawb = unpack("H32", $kana);
 #    print "$rawb\n";
@@ -106,8 +106,8 @@ sub kanatoroma {
     while (my $thisbyte = shift @skb) {
         if (($thisbyte eq $hirabegin) || ($thisbyte eq $katabegin)) {
             my $nextbyte = shift @skb;
-            if ($allkana{$thisbyte . $nextbyte}) {
-                    $newroma .=  $allkana{$thisbyte . $nextbyte};
+            if ($Lingua::JA::Romaji::allkana{$thisbyte . $nextbyte}) {
+                    $newroma .=  $Lingua::JA::Romaji::allkana{$thisbyte . $nextbyte};
             } else {
                 $newroma .= $thisbyte . $nextbyte;
             }
@@ -128,7 +128,7 @@ sub kanatoroma {
     return $newroma;
 }
 
-%hiragana = {
+%Lingua::JA::Romaji::hiragana = (
                '’' => '.',
                '□' => '-',
                '五扎' => 'kya',
@@ -283,8 +283,8 @@ sub kanatoroma {
                '仄文' => 'syu',
                '刈之' => 'dje',
                '仄斤' => 'syo'
-             };
-%katakana = {
+             );
+%Lingua::JA::Romaji::katakana = (
                '平亙' => 'kyu',
                '斥尼' => 'jye',
                '平亦' => 'kyo',
@@ -446,8 +446,8 @@ sub kanatoroma {
                '氐尼' => 'dje',
                '扑亦' => 'syo',
                '平乓' => 'kya'
-             };
-%roma = {
+             );
+%Lingua::JA::Romaji::roma = (
            'fo' => {
                      'kata' => '白巧',
                      'hira' => '孔予'
@@ -499,7 +499,8 @@ sub kanatoroma {
                      'hira' => '及'
                    },
            'va' => {
-                     'kata' => '任央'
+                     'kata' => '任央',
+                     'hira' => '任丑'
                    },
            'nyo' => {
                       'kata' => '瓦亦',
@@ -510,7 +511,8 @@ sub kanatoroma {
                      'hira' => '互'
                    },
            've' => {
-                     'kata' => '任尼'
+                     'kata' => '任尼',
+                     'hira' => '任之'
                    },
            'nu' => {
                      'kata' => '甘',
@@ -521,7 +523,8 @@ sub kanatoroma {
                      'hira' => '仆'
                    },
            'vi' => {
-                     'kata' => '任奴'
+                     'kata' => '任奴',
+                     'hira' => '任不'
                    },
            'nyu' => {
                       'kata' => '瓦亙',
@@ -532,14 +535,16 @@ sub kanatoroma {
                      'hira' => '亢'
                    },
            'vo' => {
-                     'kata' => '任巧'
+                     'kata' => '任巧',
+                     'hira' => '任予    '
                    },
            'go' => {
                      'kata' => '打',
                      'hira' => '仍'
                    },
            'vu' => {
-                     'kata' => '任'
+                     'kata' => '任',
+                     'hira' => '任'
                    },
            'dya' => {
                       'kata' => '犯乓',
@@ -1217,8 +1222,8 @@ sub kanatoroma {
                       'kata' => '扑',
                       'hira' => '仄'
                     }
-         };
-%allkana = {
+         );
+%Lingua::JA::Romaji::allkana = (
               '平亙' => 'kyu',
               '斥尼' => 'je',
               '平亦' => 'kyo',
@@ -1303,11 +1308,15 @@ sub kanatoroma {
               '夫之' => 'hye',
               '任央' => 'va',
               '任奴' => 'vi',
+              '任丑' => 'va',
+              '任不' => 'vi',
               '白央' => 'fa',
               '白奴' => 'fi',
               '任尼' => 've',
+              '任之' => 've',
               '刈扎' => 'dza',
               '任巧' => 'vo',
+              '任予' => 'vo',
               '白尼' => 'fe',
               '刈文' => 'dju',
               '白巧' => 'fo',
@@ -1532,7 +1541,7 @@ sub kanatoroma {
               '扑亦' => 'sho',
               '夭之' => 'pye',
               '平乓' => 'kya'
-            };
+            );
 
 
 1;
@@ -1585,11 +1594,15 @@ to avoid the strings /ix/i or /ux/i as they will be removed in conversion.
 Conversion is not necessarily reversible.  This is because there can be
 many romaji representations of given kana.
 
-Certain constructs, such as /va/, can only be represented in katakana.
-Care should be taken with the second parameter to &romajitokana, as 
-it will produce no equivalent in hiragana mode.
+Certain morae, namely /v[aeiou]/, can only be represented with katakana,
+and &romajitokana will produce katakana characters for these morae 
+even in hiragana mode.  
 
-Kanji is not implemented at all.  It is a non-trivial problem.
+Kanji is not implemented at all.  It is a non-trivial problem, and
+beyond the scope of this module.  
+
+Behavior on non-little endian machines for &kanatoromaji is not
+yet known.
 
 =head1 LICENSE
 
